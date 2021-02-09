@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/animate.js"></script>
+    <style>
+        * {
+            /* 清除页面默认内外边距 */
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        li {
+            /* 清除li标签默认样式 */
+            list-style: none;
+        }
+        
+        .wrap {
+            position: relative;
+            margin: 50px auto;
+            width: 1226px;
+            height: 460px;
+            overflow: hidden;
+        }
+        
+        .wrap .list {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 7356px;
+            height: 460px;
+        }
+        
+        .list li {
+            float: left;
+        }
+        
+        .list img {
+            /* 设置图片大小 */
+            width: 1226px;
+            height: 460px;
+        }
+        
+        .left,
+        .right {
+            position: absolute;
+            top: 50%;
+            width: 40px;
+            height: 60px;
+            line-height: 55px;
+            margin-top: -30px;
+            background: rgba(0, 0, 0, .2);
+            font-size: 50px;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            right: 0;
+        }
+        
+        .olist {
+            position: absolute;
+            bottom: 25px;
+            right: 30px;
+            width: 125px;
+            height: 20px;
+        }
+        
+        .olist li {
+            float: left;
+            width: 20PX;
+            height: 20px;
+            background-color: #fff;
+            margin-right: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .olist .on {
+            background-color: #576872;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <!-- 轮播图 -->
+        <ul class="list">
+            <li>
+                <a href="javascript:;"><img src="images/phone1.jpg" alt=""></a>
+            </li>
+            <li>
+                <a href="javascript:;"><img src="images/phone2.webp" alt=""></a>
+            </li>
+            <li>
+                <a href="javascript:;"><img src="images/phone3webp.webp" alt=""></a>
+            </li>
+            <li>
+                <a href="javascript:;"><img src="images/phone4.webp" alt=""></a>
+            </li>
+            <li>
+                <a href="javascript:;"><img src="images/phone5.webp" alt=""></a>
+            </li>
+        </ul>
+        <!-- 两侧按钮 -->
+        <div class="left">&lt;</div>
+        <div class="right">&gt;</div>
+        <!-- 小圆点 -->
+        <ol class="olist"></ol>
+    </div>
+    <script>
+        // 获取元素
+        var wrap = document.querySelector('.wrap');
+        var left = document.querySelector('.left');
+        var right = document.querySelector('.right');
+
+        // 1. 鼠标经过 wrap div盒子左右按钮显示出来 && 鼠标离开左右按钮隐藏
+        wrap.addEventListener('mouseenter', function() {
+            left.style.display = 'block';
+            right.style.display = 'block';
+            clearInterval(timer);
+            timer = null;
+        });
+
+        wrap.addEventListener('mouseleave', function() {
+            left.style.display = 'none';
+            right.style.display = 'none';
+            timer = setInterval(function() {
+                right.click();
+            }, 2000);
+        });
+
+        // 动态生成小圆点
+        var ul = document.querySelector('.list');
+        var ol = document.querySelector('.olist');
+        var wrapwidth = wrap.offsetWidth; // 图片的宽度 1226px
+        for (var i = 0; i < ul.children.length; i++) {
+            // 创建节点
+            var li = document.createElement('li');
+            // 插入节点
+            ol.appendChild(li);
+            // 设置自定义属性
+            li.setAttribute('index', i);
+            // 绑定事件
+            li.addEventListener('mouseover', function() {
+                // 排他思想
+                for (var i = 0; i < ol.children.length; i++) {
+                    ol.children[i].className = '';
+                }
+                this.className = 'on';
+                // 经过圆点移动图片
+                var index = this.getAttribute('index'); // 当前 li 的索引号
+                num = index;
+                circle = index;
+                animate(ul, -index * wrapwidth);
+            });
+        }
+
+        // 设置当前类名
+        ol.children[0].className = 'on';
+        // 克隆第一张图片
+        var first = ul.children[0].cloneNode(true);
+        ul.appendChild(first);
+
+        // 点击右侧按钮 滚动图片
+        var num = 0;
+        var circle = 0;
+        var flag = true;
+        right.addEventListener('click', function() {
+            if (flag) {
+                flag = false;
+                // 无缝滚动
+                if (num == ul.children.length - 1) {
+                    ul.style.left = 0;
+                    num = 0;
+                }
+                num++;
+                animate(ul, -num * wrapwidth, function() {
+                    flag = true; // 打开节流阀
+                });
+                // 点击按钮使圆圈相应变化
+                circle++;
+                // 排他思想
+                if (circle == ol.children.length) {
+                    circle = 0;
+                }
+                circleChange();
+            }
+        });
+
+        // 点击左侧按钮 滚动图片
+        left.addEventListener('click', function() {
+            if (flag) {
+                flag = false;
+                if (num == 0) {
+                    num = ul.children.length - 1;
+                    ul.style.left = -num * wrapwidth + 'px';
+                }
+                num--;
+                animate(ul, -num * wrapwidth, function() {
+                    flag = true;
+                });
+                // 点击按钮使圆圈相应变化
+                circle--;
+                // // if (circle < 0) {
+                //     circle = ol.children.length - 1;
+                // }
+                circle = circle < 0 ? ol.children.length - 1 : circle;
+                circleChange()
+            }
+        });
+
+        function circleChange() {
+            for (var i = 0; i < ol.children.length; i++) {
+                ol.children[i].className = '';
+            }
+            ol.children[circle].className = 'on';
+        }
+
+        // 自动轮播
+        var timer = setInterval(function() {
+            right.click();
+        }, 2000);
+    </script>
+</body>
+
+</html>
