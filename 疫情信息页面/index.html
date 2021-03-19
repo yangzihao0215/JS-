@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>疫情信息页面</title>
+    <style>
+        * {
+            margin: 0;
+        }
+
+        .title {
+            font-size: 40px;
+            font-weight: 400;
+            text-align: center;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+        .father {
+            display: flex;
+            justify-content: center;
+        }
+
+        .child {
+            background-color: #cfffff;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 10px;
+            color: #868686;
+        }
+
+        .child p {
+            font-size: 25px;
+            color: #ff6700;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="title">全国疫情整体情况</h2>
+    <div class="father">
+        <div class="child">
+            <p id="heal"></p>
+            <h2>现有确诊</h2>
+        </div>
+        <div class="child">
+            <p id="heal"></p>
+            <h2>无症状感染者</h2>
+        </div>
+        <div class="child">
+            <p id="heal"></p>
+            <h2>境外输入</h2>
+        </div>
+        <div class="child">
+            <p id="heal"></p>
+            <h2>累计确诊</h2>
+        </div>
+        <div class="child">
+            <p id="heal"></p>
+            <h2>累计治愈</h2>
+        </div>
+        <div class="child">
+            <p id="heal"></p>
+            <h2>累计死亡</h2>
+        </div>
+    </div>
+    
+    <script>
+        /* 
+            腾讯疫情信息接口: https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayList,chinaDayAddList,nowConfirmStatis,provinceCompare
+         */
+        // 定义一个名为 data 的变量，用这个变量接收返回的数据
+        let data;
+        // 新建一个 XMLHttpRequest 对象用于在后台与服务器交换数据
+        let ajax = new XMLHttpRequest();
+        // 函数参数说明 第一个参数是指你想要以那种请求类型去请求后面的接口，一般为 get 或 pos
+        ajax.open('GET', 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayList,chinaDayAddList,nowConfirmStatis,provinceCompare');
+        // 每当 readyState 改变时就会触发 onreadystatechange 函数
+        // 一共有4个状态
+        // 0: 初始化
+        // 1: 建立连接
+        // 2: 请求已接受
+        // 3: 请求处理中
+        // 4: 请求已完成
+        // 在 onreadystatechange 函数中 判断 readyState(指的是ajax状态码) && status(http状态码)
+        ajax.onreadystatechange = function() {
+            // 如果redayState == 4 说明请求已完成 数据就绪
+            if (ajax.readyState == 4 && ajax.status == 200) {
+                // 请求到的数据赋值给变量 data
+                // 由于responseText 返回的数据是字符串类型 需要把它转化为JSON格式
+                data = JSON.parse(ajax.responseText);
+                console.log(data);
+                // 为了方便调用再封装一次数据
+                let arr = data.data.chinaDayList[59];
+                let he = document.querySelectorAll('#heal');
+                he[0].innerHTML = arr.nowConfirm;
+                he[1].innerHTML = arr.noInfect;
+                he[2].innerHTML = arr.importedCase;
+                he[3].innerHTML = arr.confirm;
+                he[4].innerHTML = arr.heal;
+                he[5].innerHTML = arr.dead;
+            }
+        }
+        // 发送请求
+        ajax.send();
+    </script>
+</body>
+</html>
