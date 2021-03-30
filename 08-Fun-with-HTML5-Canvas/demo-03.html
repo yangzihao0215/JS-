@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="draw" height="800" width="800 "></canvas>
+  <script>
+    ;
+    (function () {
+      let canvas = document.querySelector('#draw');
+      let ctx = canvas.getContext('2d'); // 获取2d上下文
+      // 设置画板宽高 和 屏幕一样
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+
+      let lineWidth = 100;
+      let colorDeg = 0; // 改变颜色参数
+      let direction = -1;
+      ctx.strokeStyle = `hsl(${colorDeg}, 100%, 50%)`; // 线条颜色
+
+      ctx.lineWidth = lineWidth; // 线条粗细
+      ctx.lineCap = 'round'; // 尾部形状
+      ctx.lineJoin = 'round'; // 转角形状
+
+
+      let drwaing = false;
+      let x = 0,
+        y = 0;
+      // 鼠标按下事件
+      canvas.addEventListener('mousedown', (e) => {
+        drwaing = true;
+        [x, y] = [e.offsetX, e.offsetY];
+      });
+
+      // 鼠标移动事件
+      canvas.addEventListener('mousemove', (e) => { // 画画函数
+        if (!drwaing) return
+
+        ctx.beginPath(); // 创建路径
+        colorDeg = colorDeg < 360 ? colorDeg + 1 : 0;
+        ctx.strokeStyle = `hsl(${colorDeg}, 100%, 50%)`; // 线条颜色
+
+        if (lineWidth < 10 || lineWidth > 200) {
+          direction *= -1;
+        }
+        lineWidth += direction;
+
+        ctx.lineWidth = lineWidth;
+        ctx.moveTo(x, y); // 开始画的坐标
+        ctx.lineTo(e.offsetX, e.offsetY); // 结束的坐标
+        [x, y] = [e.offsetX, e.offsetY]; // 更新下坐标
+        ctx.stroke();
+      });
+
+      // 鼠标松开事件
+      canvas.addEventListener('mouseup', () => {
+        drwaing = false;
+      });
+
+      // 鼠标离开事件
+      canvas.addEventListener('mouseleave', () => {
+        drwaing = false;
+      });
+    })();
+  </script>
+</body>
+
+</html>

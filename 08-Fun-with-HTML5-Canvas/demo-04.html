@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="draw" width="200" height="200"></canvas>
+  <script>
+    let canvas = document.querySelector('#draw');
+    // 获取2d上下文
+    let ctx = canvas.getContext('2d');
+
+    // 让画板 大小 和 屏幕一样大
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    let isDrawing = false; // 控制画笔启动开关
+    let x, y = 0;
+
+    ctx.lineWidth = 30; // 画笔大小
+    ctx.strokeStyle = '#ff6700'; // 画笔颜色
+    ctx.lineCap = 'round'; // 结尾形状为圆形
+    ctx.lineJoin = 'round'; // 转角处形状为圆形
+
+    let hue = 0; // 控制颜色参数
+    let dection = true; // 改变画笔大小参数
+    let lastX, lastY = 0;
+
+    function drw(e) {
+      if (!isDrawing) return;
+      if (e.type == 'mousemove') {
+        [x, y] = [e.offsetX, e.offsetY];
+      } else {
+        [x, y] = [e.changedTouches[0].clientX, e.changedTouches[0].clientY];
+      }
+
+      // 彩虹效果
+      hue = hue < 360 ? hue + 1 : 0;
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+
+      // 画笔效果
+      if (ctx.lineWidth > 100 || ctx.lineWidth < 10) dection = !dection;
+      if (dection) {
+        ctx.lineWidth++
+      } else {
+        ctx.lineWidth--
+      }
+
+      ctx.beginPath(); // 创建路径
+      ctx.moveTo(lastX, lastY); // 开始坐标
+      ctx.lineTo(x, y); // 结束位置
+      ctx.stroke(); // 描绘路径
+      [lastX, lastY] = [x, y]; // 更新坐标
+    };
+
+    canvas.addEventListener('mousedown', (e) => { // 鼠标按下
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY]; // 更新坐标
+    });
+    canvas.addEventListener('mousemove', drw); // 鼠标移动
+    canvas.addEventListener('mouseup', () => { // 鼠标松开
+      isDrawing = false;
+    });
+    // 鼠标离开
+    canvas.addEventListener('mouseout', () => isDrawing = false);
+
+    // 支持移动端
+    canvas.addEventListener('touchstart', (e) => { // 触摸屏幕
+      isDrawing = true;
+      lastX = e.changedTouches[0].clientX;
+      lastY = e.changedTouches[0].clientY;
+    });
+    canvas.addEventListener('touchmove', drw); // 触摸移动
+    canvas.addEventListener('touchend', () => isDrawing = false); // 触摸移除
+    canvas.addEventListener('touchcancel', () => isDrawing = false); // 触摸中断触发
+  </script>
+</body>
+
+</html>
