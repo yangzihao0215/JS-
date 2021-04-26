@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ch-NC">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Console Tricks!</title>
+</head>
+
+<body>
+
+  <p onClick="makeGreen()">×天子守国门，君王死社稷！×</p>
+
+  <script>
+    const dogs = [{
+      name: 'Snickers',
+      age: 2
+    }, {
+      name: 'hugo',
+      age: 8
+    }];
+
+    function makeGreen() {
+      const p = document.querySelector('p');
+      p.style.color = '#BADA55';
+      p.style.fontSize = '50px';
+    }
+
+    // console.log小工具
+    let console = { // 修改一个参数来控制全部的log
+      isDev: true,
+      log(...args) {
+        if (!this.isDev) return;
+        // window.console.log("%c住手", "font-size: 60px; color: red;");
+        window.console.log(...args);
+      },
+      warn(...args) {
+        if (!this.isDev) return;
+        window.console.warn(...args);
+      },
+      error(...args) {
+        if (!this.isDev) return;
+        window.console.error(...args);
+      },
+      info(...args) {
+        if (!this.isDev) return;
+        window.console.info(...args);
+      },
+      assert(...args) {
+        if (!this.isDev) return;
+        window.console.assert(...args);
+      },
+      clear() {
+        if (!this.isDev) return;
+        window.console.clear();
+      },
+      dir(...args) {
+        if (!this.isDev) return;
+        window.console.dir(...args);
+      },
+      table(...args) {
+        if (!this.isDev) return;
+        window.console.table(...args);
+      },
+      count(...args) {
+        if (!this.isDev) return;
+        window.console.count(...args);
+      },
+      time(...args) {
+        if (!this.isDev) return;
+        window.console.time(...args);
+      },
+      timeEnd(...args) {
+        if (!this.isDev) return;
+        window.console.timeEnd(...args);
+      }
+    };
+    // Regular 常规输出
+    console.log(123, 156);
+
+    // Interpolated 替换字符
+    console.log("My name is %s !!!", "alex"); // 替换字符 My name is alex !!!
+    console.log("I hava %f dollars!!!", 3.45); // 替换成小数 I hava 3.45 dollars!!!
+    console.log("I hava %d dollars!!!", 3.45); // 替换成整数 I hava 3 dollars!!!
+    // ES6 更加方便
+    let name = "alex";
+    console.log(`My name is ${name} !!!`);
+
+    // Styled %c 设定输出的样式，在之后的文字将按照第二个参数里面的值进行显示
+    console.log("%c住手", "font-size: 60px; color: red;");
+
+    // warning! 警告提示
+    console.warn("警告");
+
+    // Error :| 报错提示
+    console.error('突然杀出来一个错误！哈哈');
+
+    // Info
+    console.info("好像跟log一样！")
+
+    // Testing  测试
+    console.assert(true, "不会显示");
+    console.assert(false, "我会出现在面板上！")
+    console.assert(0, "二弟紧跟其后!");
+    console.assert(NaN, "三弟来此一聚!");
+    console.assert(null, "来个桃园四结义可好!")
+    console.assert(undefined, "呜呜，我来晚了!")
+
+    // clearing 清除console面板上的内容 浏览器快捷键 ctrl + L 或者 面板输入 window.clear()
+    // console.clear();
+
+    // Viewing DOM Elements   打印DOM元素
+    const p = document.querySelector('p');
+    console.log(p); // 常规 log 输出 这个DOM的 HTML标签
+    console.dir(p); // dir 输出 这个 DOM 元素的属性列表
+    console.dir(console); // 展开一个对象的属性列表
+
+    // Grouping together
+    console.table(dogs);
+    console.table(dogs, ['age']);
+
+    // counting 计数 每输出一个就计数一个
+    console.count('Wes');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+
+    // timing
+    console.time('test1');
+    let i;
+    let j;
+    for (i = 1; i < 10000000; i++) {
+      j = i;
+    }
+    console.timeEnd('test1');
+
+    // 两者对比下
+    console.time('test2');
+    for (let i = 0; i < 10000000; i++) {
+      let j = i;
+    }
+    console.timeEnd('test2');
+  </script>
+</body>
+
+</html>
